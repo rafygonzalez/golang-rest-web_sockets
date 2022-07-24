@@ -13,6 +13,7 @@ type Repository interface {
 	GetProductById(ctx context.Context, id string) (*models.Product, error)
 	UpdateProduct(ctx context.Context, product *models.Product) error
 	DeleteProductById(ctx context.Context, id string) error
+	ListProduct(ctx context.Context, page uint64) ([]*models.Product, error)
 	Close() error
 }
 
@@ -51,6 +52,10 @@ func UpdateProduct(ctx context.Context, product *models.Product) error {
 
 func DeleteProductById(ctx context.Context, id string) error {
 	return implementation.DeleteProductById(ctx, id)
+}
+
+func ListProduct(ctx context.Context, page uint64) ([]*models.Product, error) {
+	return implementation.ListProduct(ctx, page)
 }
 
 func Close() error {

@@ -47,4 +47,5 @@ func BindRoutes(s server.Server, r *mux.Router) {
 	r.HandleFunc("/product/{id}", handlers.GetProductByIdHandler(s)).Methods(http.MethodGet)
 	r.HandleFunc("/product/{id}", handlers.UpdateProductHandler(s)).Methods(http.MethodPost)
 	r.HandleFunc("/product/{id}", handlers.DeleteProductHandler(s)).Methods(http.MethodDelete)
+	r.HandleFunc("/products", handlers.ListProductHandler(s)).Methods(http.MethodGet)
 }

@@ -109,6 +109,30 @@ func (repo *PostgresRepository) DeleteProductById(ctx context.Context, id string
 	return err
 }
 
+func (repo *PostgresRepository) ListProduct(ctx context.Context, page uint64) ([]*models.Product, error) {
+	rows, err := repo.db.QueryContext(ctx, "SELECT id, product_name, created_by FROM products LIMIT $1 OFFSET $2", 2, page*2)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		err = rows.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+	var products []*models.Product
+	for rows.Next() {
+		var product = models.Product{}
+		if err = rows.Scan(&product.Id, &product.ProductName, &product.CreatedBy); err == nil {
+			products = append(products, &product)
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return products, nil
+}
+
 func (repo *PostgresRepository) Close() error {
 	return repo.db.Close()
 }
