@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"gows/handlers"
+	"gows/middleware"
 	"gows/server"
 	"log"
 	"net/http"
@@ -36,7 +37,14 @@ func main() {
 }
 
 func BindRoutes(s server.Server, r *mux.Router) {
+	r.Use(middleware.CheckAuthMiddleware(s))
 	r.HandleFunc("/", handlers.HomeHandler(s)).Methods(http.MethodGet)
 	r.HandleFunc("/signup", handlers.SignUpHandler(s)).Methods(http.MethodPost)
 	r.HandleFunc("/login", handlers.LoginHandler(s)).Methods(http.MethodPost)
+	r.HandleFunc("/me", handlers.MeHandler(s)).Methods(http.MethodGet)
+
+	r.HandleFunc("/product", handlers.InsertProductHandler(s)).Methods(http.MethodPost)
+	r.HandleFunc("/product/{id}", handlers.GetProductByIdHandler(s)).Methods(http.MethodGet)
+	r.HandleFunc("/product/{id}", handlers.UpdateProductHandler(s)).Methods(http.MethodPost)
+	r.HandleFunc("/product/{id}", handlers.DeleteProductHandler(s)).Methods(http.MethodDelete)
 }
