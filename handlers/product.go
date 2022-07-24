@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"gows/events"
 	"gows/models"
 	"gows/repository"
 	"gows/server"
@@ -55,6 +56,11 @@ func InsertProductHandler(s server.Server) http.HandlerFunc {
 			if err != nil {
 				http.Error(rw, err.Error(), http.StatusInternalServerError)
 			}
+			var postMessage = models.WebsocketMessage{
+				Type:    events.PRODUCT_CREATED,
+				Payload: product,
+			}
+			s.Hub().Broadcast(postMessage, nil)
 			rw.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(rw).Encode(ProductResponse{
 				Id:          product.Id,
@@ -105,6 +111,7 @@ func UpdateProductHandler(s server.Server) http.HandlerFunc {
 			if err != nil {
 				http.Error(rw, err.Error(), http.StatusInternalServerError)
 			}
+
 			rw.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(rw).Encode(ProductUpdateResponse{
 				Message: "Product Updated",

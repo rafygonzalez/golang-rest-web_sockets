@@ -37,6 +37,7 @@ func main() {
 }
 
 func BindRoutes(s server.Server, r *mux.Router) {
+
 	r.Use(middleware.CheckAuthMiddleware(s))
 	r.HandleFunc("/", handlers.HomeHandler(s)).Methods(http.MethodGet)
 	r.HandleFunc("/signup", handlers.SignUpHandler(s)).Methods(http.MethodPost)
@@ -48,4 +49,6 @@ func BindRoutes(s server.Server, r *mux.Router) {
 	r.HandleFunc("/product/{id}", handlers.UpdateProductHandler(s)).Methods(http.MethodPost)
 	r.HandleFunc("/product/{id}", handlers.DeleteProductHandler(s)).Methods(http.MethodDelete)
 	r.HandleFunc("/products", handlers.ListProductHandler(s)).Methods(http.MethodGet)
+
+	r.HandleFunc("/ws", s.Hub().HandleWebSocket)
 }
