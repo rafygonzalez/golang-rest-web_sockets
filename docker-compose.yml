@@ -1,5 +1,15 @@
 version: '3.8'
 services:
+  app:
+    container_name: app
+    image: itglobers-rest-ws
+    restart: always
+    environment:
+      PORT: :5050
+      JWT_SECRET: R5LOw0R8hhlD9r582/AdsJ1zbKJyVgFU5jNqJ1B39YTFUuXaUTr5qSPnFiFASzwx
+      DATABASE_URL: postgres://root:root@192.168.0.185:54321/test_db?sslmode=disable
+    ports:
+      - "5050:5050"
   db:
     container_name: postgres_db
     image: go_db

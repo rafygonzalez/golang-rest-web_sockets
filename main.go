@@ -36,18 +36,21 @@ func main() {
 	s.Start(BindRoutes)
 }
 
-func BindRoutes(s server.Server, r *mux.Router) {
+func BindRoutes(s server.Server, rt *mux.Router) {
+	api := rt.PathPrefix("/api/private/v1").Subrouter()
+	r := rt.PathPrefix("/api/public/v1").Subrouter()
 
-	r.Use(middleware.CheckAuthMiddleware(s))
+	api.Use(middleware.CheckAuthMiddleware(s))
+
 	r.HandleFunc("/", handlers.HomeHandler(s)).Methods(http.MethodGet)
 	r.HandleFunc("/signup", handlers.SignUpHandler(s)).Methods(http.MethodPost)
 	r.HandleFunc("/login", handlers.LoginHandler(s)).Methods(http.MethodPost)
-	r.HandleFunc("/me", handlers.MeHandler(s)).Methods(http.MethodGet)
+	api.HandleFunc("/me", handlers.MeHandler(s)).Methods(http.MethodGet)
 
-	r.HandleFunc("/product", handlers.InsertProductHandler(s)).Methods(http.MethodPost)
+	api.HandleFunc("/product", handlers.InsertProductHandler(s)).Methods(http.MethodPost)
+	api.HandleFunc("/product/{id}", handlers.UpdateProductHandler(s)).Methods(http.MethodPost)
+	api.HandleFunc("/product/{id}", handlers.DeleteProductHandler(s)).Methods(http.MethodDelete)
 	r.HandleFunc("/product/{id}", handlers.GetProductByIdHandler(s)).Methods(http.MethodGet)
-	r.HandleFunc("/product/{id}", handlers.UpdateProductHandler(s)).Methods(http.MethodPost)
-	r.HandleFunc("/product/{id}", handlers.DeleteProductHandler(s)).Methods(http.MethodDelete)
 	r.HandleFunc("/products", handlers.ListProductHandler(s)).Methods(http.MethodGet)
 
 	r.HandleFunc("/ws", s.Hub().HandleWebSocket)

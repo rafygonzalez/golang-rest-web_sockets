@@ -16,5 +16,6 @@ docker-compose up
     2 - Copy Container ID
     3 - Execute the follow command to get private ip address: 
     
+    docker ps
     docker inspect [CONTAINERID] | grep IPAddress
 
